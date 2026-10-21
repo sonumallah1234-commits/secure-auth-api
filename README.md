@@ -41,7 +41,6 @@ fastapi-jwt-mysql/
 ├── alembic/
 ├── docs/
 ├── tests/
-├── .env
 ├── .env.example
 ├── alembic.ini
 ├── requirements.txt
@@ -443,3 +442,5 @@ pytest -q
 - Alembic setup: done
 - First migration: done
 - Schemas, auth, JWT, CRUD, roles, and tests: done
+
+

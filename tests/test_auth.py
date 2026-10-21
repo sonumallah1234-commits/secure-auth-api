@@ -108,3 +108,29 @@ def test_forgot_and_reset_password(client, db_session):
     )
 
     assert login_response.status_code == 200
+
+def test_login_rate_limit(client):
+    from app.core.rate_limit import _attempts
+
+    _attempts.clear()
+    try:
+        for attempt in range(5):
+            response = client.post(
+                "/api/auth/login",
+                json={
+                    "username_or_email": "unknown_user",
+                    "password": "WrongPassword@123",
+                },
+            )
+            assert response.status_code == 401, f"Attempt {attempt + 1}: {response.status_code}"
+
+        response = client.post(
+            "/api/auth/login",
+            json={
+                "username_or_email": "unknown_user",
+                "password": "WrongPassword@123",
+            },
+        )
+        assert response.status_code == 429
+    finally:
+        _attempts.clear()

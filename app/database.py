@@ -1,6 +1,7 @@
-import os
+﻿import os
 
 from dotenv import load_dotenv
+from urllib.parse import quote_plus
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -13,7 +14,7 @@ DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}"
+    f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
     f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
 

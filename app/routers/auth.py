@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_user
 from app.database import get_db
+from app.core.rate_limit import login_rate_limit
 from app.models.user import User
 from app.schemas.auth import (
     ForgotPasswordRequest,
@@ -41,7 +42,7 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
+def login(payload: LoginRequest, db: Session = Depends(get_db), _rate_limit: None = Depends(login_rate_limit)):
     user = authenticate_user(db, payload)
     if not user:
         raise HTTPException(
@@ -54,7 +55,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/token", response_model=TokenResponse)
-def token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db), _rate_limit: None = Depends(login_rate_limit)):
     user = authenticate_user(
         db,
         LoginRequest(
